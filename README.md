@@ -76,3 +76,35 @@ const RootLayout = () => {
 export default RootLayout;
 ```
 
+
+
+## 3. Setting Up Appwrite
+
+### App.json settings
+
+In the `app.json` file add the package field under the `ios` or `android`  option depending on your appwrite project. The package field should have the name of your registered `Bundle ID` in this case it's `com.jsm.aora`.
+
+```json
+ "android": {
+    "package": "com.jsm.aora"
+  },
+```
+
+### Appwrite Config
+
+Create a new directory called `lib` in the root directory and create a file called `appwrite.js`. Create an `appwriteConfig` object as follows:
+
+```js
+export const appwriteConfig = {
+  endpoint: "https://cloud.appwrite.io/v1",
+  platform: "com.jsm.aora",
+  projectId: "xxxxxxxxxxxx", // Copy ids from appwrite
+  databaseId: "xxxxxxxx", 
+  userCollectionId: "xxxxxxxx",
+  videoCllectionId: "xxxxxxxxxxx",
+  storageId: "oooooooooooooo",
+};
+```
+
+Create Attributes for the users collection in appwrite and then head to the settings of the users collection and add a role under permissions which has access to all CRUD operations.
+
