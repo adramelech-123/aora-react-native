@@ -106,5 +106,73 @@ export const appwriteConfig = {
 };
 ```
 
-Create Attributes for the users collection in appwrite and then head to the settings of the users collection and add a role under permissions which has access to all CRUD operations.
+Create Attributes for the users collection in appwrite and then head to the settings of the users collection and add a role under permissions which has access to all CRUD operations. Create a database and the relevant collections for the app, then finally create a storage bucket for all files that will be created and updated by users.
 
+### Download Client SDK for React Native
+On appwrite visit the [SDKs Docs](https://appwrite.io/docs/sdks) and select the [client sdk for react native](https://github.com/appwrite/sdk-for-react-native). Run the installation command on the Github docs:
+
+```bash
+npx expo install react-native-appwrite react-native-url-polyfill
+```
+
+Now we need to initialize the SDK by copying the code below and pasting it below the `appwriteConfig`:
+
+```js
+import { Client } from 'react-native-appwrite';
+
+export const appwriteConfig = {
+  endpoint: "https://cloud.appwrite.io/v1",
+  platform: "com.jsm.aora",
+  projectId: "xxxxxxxxxxxx", // Copy ids from appwrite
+  databaseId: "xxxxxxxx", 
+  userCollectionId: "xxxxxxxx",
+  videoCllectionId: "xxxxxxxxxxx",
+  storageId: "oooooooooooooo",
+};
+
+// Init your React Native SDK
+const client = new Client();
+
+client
+  .setEndpoint(appwriteConfig.endpoint) // Your Appwrite Endpoint
+  .setProject(appwriteConfig.projectId) // Your project ID
+  .setPlatform(appwriteConfig.platform); // Your application ID or bundle ID.
+;
+```
+
+
+Now we can make our first request using the following code below the SDK initialization:
+
+```js
+const account = new Account(client);
+
+// Register User
+account.create(ID.unique(), 'me@example.com', 'password', 'Jane Doe')
+    .then(function (response) {
+        console.log(response);
+    }, function (error) {
+        console.log(error);
+});
+
+```
+Wrap this request code inside a function e.g. `createUser` so that we are able to make a request to create the user:
+
+```js
+import "react-native-url-polyfill/auto"; //Ensure this is imported
+import { Account, Client, ID } from "react-native-appwrite";
+
+const account = new Account(client);
+
+export const createUser = () => {
+  // Register User
+  account.create(ID.unique(), "me@example.com", "password", "Jane Doe").then(
+    function (response) {
+      console.log(response);
+    },
+    function (error) {
+      console.log(error);
+    }
+  );
+}
+
+```
