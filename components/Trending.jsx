@@ -11,18 +11,19 @@ import * as Animatable from "react-native-animatable";
 import { icons } from "../constants";
 import { Video, ResizeMode } from "expo-av";
 
+
 const zoomIn = {
   0: {
     scale: 0.9,
   },
   1: {
-    scale: 1.1,
+    scale: 1.0,
   },
 };
 
 const zoomOut = {
   0: {
-    scale: 1.1,
+    scale: 1.0,
   },
   1: {
     scale: 0.9,
@@ -30,15 +31,9 @@ const zoomOut = {
 };
 
 const TrendingItem = ({ activeItem, item }) => {
-  const [play, setPlay] = useState(false);
+const [play, setPlay] = useState(false);
 
-  const handlePlaybackStatusUpdate = (status) => {
-    console.log("Playback status:", status);
-    if (status.didJustFinish) {
-      setPlay(false);
-    }
-  };
-
+ 
   return (
     <Animatable.View
       className="mr-5"
@@ -52,7 +47,11 @@ const TrendingItem = ({ activeItem, item }) => {
           resizeMode={ResizeMode.CONTAIN}
           useNativeControls
           shouldPlay
-          onPlaybackStatusUpdate={handlePlaybackStatusUpdate}
+          onPlaybackStatusUpdate={(status) => {
+            if (status.didJustFinish) {
+              setPlay(false);
+            }
+          }}
         />
       ) : (
         <TouchableOpacity
