@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View } from "react-native";
+
 import GlobalProvider from "../context/GlobalProvider"
 import {SplashScreen, Stack} from 'expo-router'
 import {useFonts} from "expo-font"

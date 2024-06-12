@@ -2,16 +2,11 @@ import {
   View,
   Text,
   FlatList,
-  Image,
-  RefreshControl,
-  Alert,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { images } from "../../constants/";
 import SearchInput from "../../components/SearchInput";
-import Trending from "../../components/Trending";
 import EmptyState from "../../components/EmptyState";
-import { useEffect, useState } from "react";
+import { useEffect} from "react";
 import { searchPosts } from "../../lib/appwrite";
 import useAppwrite from "../../lib/useAppwrite";
 import VideoCard from "../../components/VideoCard";
@@ -21,9 +16,7 @@ const Search = () => {
   const {query} = useLocalSearchParams()
   const { data: posts, refetch } = useAppwrite(() => searchPosts(query));
 
-
-  const [refreshing, setRefreshing] = useState(false);
-
+  // Refetch data whenever query changes
   useEffect(() =>{
     refetch()
   }, [query])
@@ -32,7 +25,6 @@ const Search = () => {
     <SafeAreaView className="bg-primary h-full">
       <FlatList
         data={posts}
-        // data={[]}
         keyExtractor={(item) => item.$id}
         renderItem={({ item }) => <VideoCard video={item} />}
         ListHeaderComponent={() => (
