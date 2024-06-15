@@ -176,3 +176,85 @@ export const createUser = () => {
 }
 
 ```
+
+## 4. Appwrite Functions
+
+Below are some functions we will use with appwrite to create, read, update and delete data from our appwrite database.
+
+
+### uploadFile Function
+
+The purpose of the `uploadFile` function is to:
+1. Upload a provided file to a storage service.
+2. Ensure that the file's MIME type is correctly set in the `asset` object.
+3. Retrieve and return the URL for the file's preview.
+4. Handle any errors that may occur during the process, ensuring robust and reliable file upload functionality.
+
+```javascript
+export const uploadFile = async (file, type) => {
+  if (!file) return; // If no file is provided, exit the function early.
+
+  // Destructure the mimeType property from the file object and gather the rest of the properties into the rest object.
+  const { mimeType, ...rest } = file;
+  // Create a new asset object with a type property set to mimeType and the rest of the file properties spread into it so that appwrite can understand the file.
+  const asset = { type: mimeType, ...rest };
+
+  try {
+    // Attempt to upload the file to the storage service.
+    const uploadedFile = await storage.createFile(
+      storageId, // The ID of the storage where the file will be uploaded.
+      ID.unique(), // Generate a unique ID for the file.
+      asset // The file data to be uploaded.
+    );
+
+    // Get the URL for the file preview based on the uploaded file's ID and the specified type.
+    const fileUrl = await getFilePreview(uploadedFile.$id, type);
+    return fileUrl; // Return the file URL.
+  } catch (error) {
+    throw new Error(); // Throw a generic error if something goes wrong during the upload or URL retrieval process.
+  }
+};
+```
+
+### getFilePreview function
+
+The `getFilePreview` function is an asynchronous function designed to generate and return a preview URL for a given file based on its type (either 'video' or 'image'). It interacts with a storage service to retrieve the appropriate URL for the file preview.
+
+The purpose of the `getFilePreview` function is to:
+1. Generate and return the appropriate preview URL for a given file based on its type ('video' or 'image').
+2. Handle different types of files by calling specific methods from the storage service.
+3. Provide error handling to ensure that any issues during the URL generation process are reported correctly.
+
+```javascript
+export const getFilePreview = async (fileId, type) => {
+  let fileUrl; // Declare a variable to store the file URL
+
+  try {
+    if (type === 'video') {
+      // If the file type is 'video', get the file view URL from the storage
+      fileUrl = storage.getFileView(storageId, fileId);
+    } else if (type === 'image') {
+      // If the file type is 'image', get the file preview URL with specified dimensions and quality
+      // The method is called with additional parameters to specify the dimensions (2000x2000), cropping style ('top'), and quality (100).
+      fileUrl = storage.getFilePreview(storageId, fileId, 2000, 2000, 'top', 100);
+    } else {
+      // If the file type is neither 'video' nor 'image', throw an error
+      throw new Error('Invalid file type ⚠️');
+    }
+
+    if (!fileUrl) throw Error; // If fileUrl is not set, throw an error
+
+    return fileUrl; // Return the file URL
+
+  } catch (error) {
+    // Catch any errors that occur and throw a new error with the caught error's message
+    throw new Error(error);
+  }
+};
+```
+
+
+
+
+
+
